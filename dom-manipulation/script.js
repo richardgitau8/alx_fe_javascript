@@ -21,13 +21,29 @@ function showRandomQuote() {
 // Function to create the add quote form
 function createAddQuoteForm() {
   const formContainer = document.getElementById('addQuoteFormContainer');
-  formContainer.innerHTML = `
-    <div class="form-container">
-      <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-      <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-      <button onclick="addQuote()">Add Quote</button>
-    </div>
-  `;
+  formContainer.innerHTML = '';
+
+  const formDiv = document.createElement('div');
+  formDiv.className = 'form-container';
+
+  const inputText = document.createElement('input');
+  inputText.id = 'newQuoteText';
+  inputText.type = 'text';
+  inputText.placeholder = 'Enter a new quote';
+  formDiv.appendChild(inputText);
+
+  const inputCategory = document.createElement('input');
+  inputCategory.id = 'newQuoteCategory';
+  inputCategory.type = 'text';
+  inputCategory.placeholder = 'Enter quote category';
+  formDiv.appendChild(inputCategory);
+
+  const addButton = document.createElement('button');
+  addButton.onclick = addQuote;
+  addButton.textContent = 'Add Quote';
+  formDiv.appendChild(addButton);
+
+  formContainer.appendChild(formDiv);
 }
 
 // Function to add a new quote
@@ -54,7 +70,9 @@ function exportToJsonFile() {
   const a = document.createElement('a');
   a.href = url;
   a.download = 'quotes.json';
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
 }
 
 // Function to import quotes from a JSON file
@@ -76,7 +94,11 @@ window.onload = function() {
     const quoteDisplay = document.getElementById('quoteDisplay');
     quoteDisplay.innerHTML = `<p>${lastQuote.text}</p><p><em>Category: ${lastQuote.category}</em></p>`;
   }
+
+  // Add event listeners to buttons
+  document.getElementById('newQuote').addEventListener('click', showRandomQuote);
+  document.getElementById('createQuoteFormButton').addEventListener('click', createAddQuoteForm);
+  document.getElementById('exportQuotesButton').addEventListener('click', exportToJsonFile);
+  document.getElementById('importFile').addEventListener('change', importFromJsonFile);
 };
 
-// Event listener for the "Show New Quote" button
-document.getElementById('newQuote').addEventListener('click', showRandomQuote);

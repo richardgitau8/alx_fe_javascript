@@ -204,6 +204,13 @@ function handleConflicts() {
   // Add conflict resolution UI elements here
 }
 
+// Function to periodically sync quotes with the server
+function startPeriodicSync(interval) {
+  setInterval(async () => {
+    await syncQuotesWithServer();
+  }, interval);
+}
+
 // Load last viewed quote and selected category from storage
 window.onload = function() {
   const lastQuote = JSON.parse(sessionStorage.getItem('lastQuote'));
@@ -224,4 +231,7 @@ window.onload = function() {
   document.getElementById('exportQuotesButton').addEventListener('click', exportToJsonFile);
   document.getElementById('importFile').addEventListener('change', importFromJsonFile);
   document.getElementById('syncButton').addEventListener('click', syncQuotesWithServer);
+
+  // Start periodic sync every 10 minutes (600000 milliseconds)
+  startPeriodicSync(600000);
 };

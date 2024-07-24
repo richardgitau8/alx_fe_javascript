@@ -162,7 +162,7 @@ async function syncQuotesWithServer() {
     populateCategories();
     filterQuotes();
 
-    alert('Quotes synced with the server successfully!');
+    alert('Quotes synced with server!');
   } catch (error) {
     console.error('Error syncing with server:', error);
     alert('Failed to sync quotes with the server.');

@@ -1,3 +1,5 @@
+const SERVER_URL = 'https://jsonplaceholder.typicode.com/posts';
+
 // Array to store quotes
 let quotes = JSON.parse(localStorage.getItem('quotes')) || [
   { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivation" },
@@ -134,6 +136,44 @@ function filterQuotes() {
   localStorage.setItem('selectedCategory', categoryFilter.value);
 }
 
+// Function to fetch quotes from the server
+async function fetchQuotesFromServer() {
+  const response = await fetch(SERVER_URL);
+  const serverQuotes = await response.json();
+  return serverQuotes;
+}
+
+// Function to sync quotes with the server
+async function syncQuotesWithServer() {
+  const serverQuotes = await fetchQuotesFromServer();
+  const localQuotes = JSON.parse(localStorage.getItem('quotes')) || [];
+  
+  // Merge server quotes with local quotes
+  const mergedQuotes = [...localQuotes, ...serverQuotes.filter(serverQuote => {
+    return !localQuotes.some(localQuote => localQuote.text === serverQuote.text);
+  })];
+
+  // Save merged quotes to local storage
+  quotes = mergedQuotes;
+  saveQuotes();
+  populateCategories();
+  filterQuotes();
+
+  alert('Quotes synced with the server successfully!');
+}
+
+// Function to handle conflicts
+function handleConflicts() {
+  const conflictResolutionContainer = document.getElementById('conflictResolutionContainer');
+  conflictResolutionContainer.innerHTML = '';
+
+  const conflictTitle = document.createElement('h2');
+  conflictTitle.textContent = 'Conflict Resolution';
+  conflictResolutionContainer.appendChild(conflictTitle);
+
+  // Add conflict resolution UI elements here
+}
+
 // Load last viewed quote and selected category from storage
 window.onload = function() {
   const lastQuote = JSON.parse(sessionStorage.getItem('lastQuote'));
@@ -153,4 +193,5 @@ window.onload = function() {
   document.getElementById('createQuoteFormButton').addEventListener('click', createAddQuoteForm);
   document.getElementById('exportQuotesButton').addEventListener('click', exportToJsonFile);
   document.getElementById('importFile').addEventListener('change', importFromJsonFile);
+  document.getElementById('syncButton').addEventListener('click', syncQuotesWithServer);
 };

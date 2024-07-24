@@ -13,7 +13,8 @@ function saveQuotes() {
 // Function to display a random quote
 function showRandomQuote() {
   const quoteDisplay = document.getElementById('quoteDisplay');
-  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+  const filteredQuotes = getFilteredQuotes();
+  const randomQuote = filteredQuotes[Math.floor(Math.random() * filteredQuotes.length)];
   quoteDisplay.innerHTML = `<p>${randomQuote.text}</p><p><em>Category: ${randomQuote.category}</em></p>`;
   sessionStorage.setItem('lastQuote', JSON.stringify(randomQuote));
 }
@@ -54,6 +55,7 @@ function addQuote() {
   if (newQuoteText && newQuoteCategory) {
     quotes.push({ text: newQuoteText, category: newQuoteCategory });
     saveQuotes();
+    populateCategoryFilter();
     document.getElementById('newQuoteText').value = '';
     document.getElementById('newQuoteCategory').value = '';
     alert('Quote added successfully!');
@@ -72,33 +74,4 @@ function exportToJsonFile() {
   a.download = 'quotes.json';
   document.body.appendChild(a);
   a.click();
-  document.body.removeChild(a);
-}
-
-// Function to import quotes from a JSON file
-function importFromJsonFile(event) {
-  const fileReader = new FileReader();
-  fileReader.onload = function(event) {
-    const importedQuotes = JSON.parse(event.target.result);
-    quotes.push(...importedQuotes);
-    saveQuotes();
-    alert('Quotes imported successfully!');
-  };
-  fileReader.readAsText(event.target.files[0]);
-}
-
-// Load last viewed quote from session storage
-window.onload = function() {
-  const lastQuote = JSON.parse(sessionStorage.getItem('lastQuote'));
-  if (lastQuote) {
-    const quoteDisplay = document.getElementById('quoteDisplay');
-    quoteDisplay.innerHTML = `<p>${lastQuote.text}</p><p><em>Category: ${lastQuote.category}</em></p>`;
-  }
-
-  // Add event listeners to buttons
-  document.getElementById('newQuote').addEventListener('click', showRandomQuote);
-  document.getElementById('createQuoteFormButton').addEventListener('click', createAddQuoteForm);
-  document.getElementById('exportQuotesButton').addEventListener('click', exportToJsonFile);
-  document.getElementById('importFile').addEventListener('change', importFromJsonFile);
-};
-
+  document.body

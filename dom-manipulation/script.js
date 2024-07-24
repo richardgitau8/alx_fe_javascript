@@ -145,22 +145,51 @@ async function fetchQuotesFromServer() {
 
 // Function to sync quotes with the server
 async function syncQuotesWithServer() {
-  const serverQuotes = await fetchQuotesFromServer();
+  try {
+    // Fetch quotes from the server
+    const serverQuotes = await fetchQuotesFromServer();
 
-  // Implement conflict resolution: server data takes precedence
-  const serverQuotesMap = new Map(serverQuotes.map(quote => [quote.text, quote]));
-  const localQuotesMap = new Map(quotes.map(quote => [quote.text, quote]));
+    // Merge server quotes with local quotes
+    const serverQuotesMap = new Map(serverQuotes.map(quote => [quote.text, quote]));
+    const localQuotesMap = new Map(quotes.map(quote => [quote.text, quote]));
 
-  // Combine quotes, giving priority to server quotes in case of conflicts
-  const mergedQuotes = [...serverQuotesMap.values(), ...localQuotesMap.values()]
-    .filter((v, i, a) => a.findIndex(t => t.text === v.text) === i);
+    // Combine quotes, giving priority to server quotes in case of conflicts
+    const mergedQuotes = [...serverQuotesMap.values(), ...localQuotesMap.values()]
+      .filter((v, i, a) => a.findIndex(t => t.text === v.text) === i);
 
-  quotes = mergedQuotes;
-  saveQuotes();
-  populateCategories();
-  filterQuotes();
+    quotes = mergedQuotes;
+    saveQuotes();
+    populateCategories();
+    filterQuotes();
 
-  alert('Quotes synced with the server successfully!');
+    alert('Quotes synced with the server successfully!');
+  } catch (error) {
+    console.error('Error syncing with server:', error);
+    alert('Failed to sync quotes with the server.');
+  }
+}
+
+// Function to post quotes to the server
+async function postQuotesToServer() {
+  try {
+    const response = await fetch(SERVER_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(quotes)
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const result = await response.json();
+    console.log('Server response:', result);
+  } catch (error) {
+    console.error('Error posting quotes to server:', error);
+    alert('Failed to post quotes to the server.');
+  }
 }
 
 // Function to handle conflicts

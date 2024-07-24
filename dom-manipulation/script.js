@@ -146,14 +146,15 @@ async function fetchQuotesFromServer() {
 // Function to sync quotes with the server
 async function syncQuotesWithServer() {
   const serverQuotes = await fetchQuotesFromServer();
-  const localQuotes = JSON.parse(localStorage.getItem('quotes')) || [];
-  
-  // Merge server quotes with local quotes
-  const mergedQuotes = [...localQuotes, ...serverQuotes.filter(serverQuote => {
-    return !localQuotes.some(localQuote => localQuote.text === serverQuote.text);
-  })];
 
-  // Save merged quotes to local storage
+  // Implement conflict resolution: server data takes precedence
+  const serverQuotesMap = new Map(serverQuotes.map(quote => [quote.text, quote]));
+  const localQuotesMap = new Map(quotes.map(quote => [quote.text, quote]));
+
+  // Combine quotes, giving priority to server quotes in case of conflicts
+  const mergedQuotes = [...serverQuotesMap.values(), ...localQuotesMap.values()]
+    .filter((v, i, a) => a.findIndex(t => t.text === v.text) === i);
+
   quotes = mergedQuotes;
   saveQuotes();
   populateCategories();

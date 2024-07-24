@@ -8,12 +8,17 @@
 </head>
 <body>
   <h1>Dynamic Quote Generator</h1>
+  <select id="categoryFilter" onchange="filterQuotes()">
+    <option value="all">All Categories</option>
+  </select>
   <div id="quoteDisplay"></div>
   <button id="newQuote">Show New Quote</button>
   <div id="addQuoteFormContainer"></div>
-  <button onclick="createAddQuoteForm()">Add New Quote</button>
-  <button onclick="exportToJsonFile()">Export Quotes</button>
-  <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+  <button id="createQuoteFormButton">Add New Quote</button>
+  <button id="exportQuotesButton">Export Quotes</button>
+  <input type="file" id="importFile" accept=".json" />
+  <button id="syncButton">Sync with Server</button>
+  <div id="conflictResolutionContainer"></div>
   <script src="script.js"></script>
 </body>
 </html>

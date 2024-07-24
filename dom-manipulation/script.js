@@ -173,11 +173,11 @@ async function syncQuotesWithServer() {
 async function postQuotesToServer() {
   try {
     const response = await fetch(SERVER_URL, {
-      method: 'POST',
+      method: 'POST', // HTTP method
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json' // Request headers
       },
-      body: JSON.stringify(quotes)
+      body: JSON.stringify(quotes) // Request body
     });
 
     if (!response.ok) {
